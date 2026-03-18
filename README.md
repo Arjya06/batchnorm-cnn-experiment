@@ -1,174 +1,71 @@
-# Batch Normalization Experiment on CNN (CIFAR-10)
+Batch Normalization in CNN on CIFAR-10
 
-## Overview
+This project compares a simple CNN trained with and without Batch Normalization on the CIFAR-10 dataset.
 
-Batch Normalization is a widely used technique in deep learning that is often said to stabilize training and improve convergence. Instead of just accepting that claim, I wanted to test it myself in a controlled experiment.
+The goal was to see whether BatchNorm actually improves training and final accuracy when everything else is kept the same.
 
-In this project, I trained the **same CNN architecture with and without Batch Normalization** on the CIFAR-10 dataset and compared how the training process behaved.
+Dataset
 
-The goal was not only to compare final accuracy, but also to observe **how the training dynamics change when BatchNorm is introduced.**
+CIFAR-10 contains:
 
----
+60,000 color images
 
-## Dataset
+10 classes
 
-The experiment uses the **CIFAR-10 dataset**, which contains:
+Image size: 32×32
 
-- 60,000 color images
-- Image size: 32 × 32
-- 10 object classes
+Split:
 
-Classes include:
+50,000 training images
 
-- airplane
-- automobile
-- bird
-- cat
-- deer
-- dog
-- frog
-- horse
-- ship
-- truck
+10,000 test images
 
-The dataset is split into:
+Models Used
+CNN without BatchNorm
 
-- **50,000 training images**
-- **10,000 test images**
+Conv → ReLU → MaxPool
+Conv → ReLU → MaxPool
+FC → ReLU → Output
 
-I chose CIFAR-10 because it is small enough to train quickly but still complex enough to observe differences in model behavior.
+CNN with BatchNorm
 
----
+Conv → BatchNorm → ReLU → MaxPool
+Conv → BatchNorm → ReLU → MaxPool
+FC → ReLU → Output
 
-## Experiment Design
+Training Setup
 
-To make the comparison fair, both models use the **same architecture and training setup**.
+Framework: PyTorch
 
-The only difference between them is whether **Batch Normalization layers are used**.
+Optimizer: Adam
 
-### Model A — Baseline CNN (No BatchNorm)
+Learning rate: 0.001
 
-Architecture:
+Batch size: 128
 
-Conv → ReLU → MaxPool  
-Conv → ReLU → MaxPool  
-Fully Connected → ReLU → Output
+Epochs: 10
 
----
+Loss: CrossEntropyLoss
 
-### Model B — CNN with BatchNorm
+Results
+Model	Test Accuracy
+CNN without BatchNorm	71.08%
+CNN with BatchNorm	70.46%
+Observation
 
-Architecture:
+The BatchNorm model showed smoother training loss and slightly faster learning in the beginning.
+But in this experiment, it did not give better final test accuracy.
 
-Conv → BatchNorm → ReLU → MaxPool  
-Conv → BatchNorm → ReLU → MaxPool  
-Fully Connected → ReLU → Output
+Conclusion
 
-Everything else remained identical:
+Batch Normalization helped training become more stable, but it did not improve performance for this small CNN on CIFAR-10.
 
-- same dataset
-- same optimizer
-- same learning rate
-- same number of epochs
+Takeaways
 
-This ensures that any observed difference comes specifically from Batch Normalization.
+BatchNorm can improve training stability
 
----
+It does not always improve final accuracy
 
-## Training Setup
+Its effect may be more useful in deeper networks
 
-Framework: **PyTorch**
-
-Training configuration:
-
-- Optimizer: Adam
-- Learning rate: 0.001
-- Batch size: 128
-- Epochs: 10
-- Loss function: CrossEntropyLoss
-
-Both models were trained under the same conditions.
-
----
-
-## Results
-
-### Test Accuracy
-
-| Model | Accuracy |
-|------|------|
-| CNN without BatchNorm | **71.08%** |
-| CNN with BatchNorm | **70.46%** |
-
-Interestingly, the model **without BatchNorm achieved slightly higher test accuracy** in this experiment.
-
----
-
-### Training Loss Curves
-
-The training curves show how the loss evolved during training.
-
-![Training Curve](training_curve.png)
-
-From the graph, the model with BatchNorm shows **smoother and slightly faster loss reduction** during early training epochs.
-
----
-
-## Observations
-
-A few interesting things stood out:
-
-- The BatchNorm model reduced training loss more smoothly.
-- The difference in loss appears mainly during **early epochs**.
-- However, the improvement in optimization did **not translate into higher final test accuracy**.
-
-This suggests that BatchNorm helped **training stability**, but in this small CNN architecture it did not significantly improve final performance.
-
----
-
-## Where BatchNorm Didn’t Help
-
-In this experiment, Batch Normalization did not improve test accuracy and actually performed slightly worse.
-
-A possible explanation is that the network used here is relatively shallow. BatchNorm tends to have stronger benefits in **deeper networks**, where training becomes more unstable.
-
-Since the architecture here is simple, the optimization problem may already be easy enough that BatchNorm does not provide a large advantage.
-
----
-
-## What I Learned
-
-This experiment reinforced an important point:  
-
-Batch Normalization mainly improves **training stability and convergence speed**, but it does not always guarantee better final accuracy.
-
-Its impact likely depends on:
-
-- network depth
-- dataset complexity
-- training duration
-
----
-
-## Future Experiments
-
-If I extended this experiment further, I would try:
-
-1. Training a **deeper CNN architecture**
-2. Running training for **more epochs**
-3. Testing the same setup on a different dataset
-
-This could help determine when BatchNorm becomes more beneficial.
-
-## How to Reproduce the Experiment
-
-1. Open the notebook in **Google Colab**
-2. Run all cells
-3. CIFAR-10 will download automatically
-4. Both models will train and generate the training curves
-
----
-
-## Final Thoughts
-
-The main takeaway from this experiment is that widely used techniques like Batch Normalization are worth testing and understanding rather than simply applying blindly. Even simple experiments can reveal interesting insights about how neural networks actually learn.
+Small experiments like this help understand how models actually behave
